@@ -81,7 +81,7 @@ class KcbController extends Controller
             $OrderId = $OrderID+1;
         }
 
-        $InvoiceNumber = "ALTIMATE-".$OrderId;
+        $InvoiceNumber = "ABM-";
         return $InvoiceNumber;
     }
 
@@ -91,7 +91,7 @@ class KcbController extends Controller
         $phoneNumber = $phoneNumbers;
         $amount = $cartTotal;
         $invoiceNumbers = $this->invoiceNumber();
-        $invoiceNumber = "$invoiceNumbers-$order_id";
+        $invoiceNumber = "$invoiceNumbers#$order_id";
         $transactionDescription = "Payment For Invoce Number: $invoiceNumber";
         //PrepareAmount;
         $rowAmount = $amount;
