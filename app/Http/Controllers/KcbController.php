@@ -109,7 +109,7 @@ class KcbController extends Controller
            "sharedShortCode"=> true,
            "orgShortCode"=> "",
            "orgPassKey"=> "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919",
-           "callbackUrl"=> "https://api.altimate.co.ke/stk-callback",
+           "callbackUrl"=> "https://buni.designekta.com/stk-callback",
            "transactionDescription"=> "Purchase Invoice #".$invoiceNumber
         );
         $prepare = json_encode($postData);
