@@ -86,6 +86,84 @@ class KcbController extends Controller
     }
 
 
+    public function stkRequestMakeGetRemote($phone,$cartTotal){
+        $phoneNumbers = $phone;
+        $phoneNumber = $phoneNumbers;
+        $amount = $cartTotal;
+        $invoiceNumber = $this->invoiceNumber();
+        $transactionDescription = "Payment For Invoce Number: $invoiceNumber";
+        //PrepareAmount;
+        $rowAmount = $amount;
+        $prepareAmountString = str_replace( ',', '', $rowAmount);
+        $amount = ceil($prepareAmountString);
+        //PreparePhoneNumber
+        $rowPhoneNumber = $phoneNumbers;
+        $preparePhoneNumberString = str_replace( '+', '', $rowPhoneNumber);
+        $mobile = $preparePhoneNumberString;
+
+       //  Invoioice
+        $postData = array(
+           "phoneNumber"=> $mobile,
+           "amount"=> $amount,
+           "invoiceNumber"=> "5993428#".$invoiceNumber,
+           "sharedShortCode"=> true,
+           "orgShortCode"=> "",
+           "orgPassKey"=> "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919",
+           "callbackUrl"=> "https://api.altimate.co.ke/stk-callback",
+           "transactionDescription"=> "Purchase Invoice #".$invoiceNumber
+        );
+        $prepare = json_encode($postData);
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+           CURLOPT_URL => 'https://api.buni.kcbgroup.com/mm/api/request/1.0.0/stkpush',
+           CURLOPT_RETURNTRANSFER => true,
+           CURLOPT_ENCODING => '',
+           CURLOPT_MAXREDIRS => 10,
+           CURLOPT_TIMEOUT => 0,
+           CURLOPT_FOLLOWLOCATION => true,
+           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+           CURLOPT_CUSTOMREQUEST => 'POST',
+           CURLOPT_POSTFIELDS =>$prepare,
+           CURLOPT_HTTPHEADER => array(
+               'accept: application/json',
+               'operation: STKPush',
+               'Content-Type: application/json',
+               'Authorization: Bearer '.$this->generateAccessToken(),
+           ),
+        ));
+
+       $curl_response = curl_exec($curl);
+
+       $curl_content=json_decode($curl_response);
+       curl_close($curl);
+       Log::info($curl_response);
+       $MerchantRequestID = $curl_content->response->MerchantRequestID;
+       $CheckoutRequestID = $curl_content->response->CheckoutRequestID;
+       $table = 'lnmo_api_response';
+       $user_id = 1;
+
+
+        // Insert MerchantRequestID
+       $curl_content=json_decode($curl_response);
+       $MerchantRequestID = $MerchantRequestID;
+       $mpesa_transaction = new STKRequest;
+       $mpesa_transaction->CheckoutRequestID =  $CheckoutRequestID;
+       $mpesa_transaction->MerchantRequestID =  $MerchantRequestID;
+       $mpesa_transaction->user_id =  $user_id;
+       $mpesa_transaction->PhoneNumber =  $mobile;
+       $mpesa_transaction->Amount =  $amount;
+       $mpesa_transaction->save();
+
+       $STKMpesaTransaction = new STKMpesaTransaction;
+       $STKMpesaTransaction->user_id = $user_id;
+       $STKMpesaTransaction->CheckoutRequestID = $CheckoutRequestID;
+       $STKMpesaTransaction->MerchantRequestID = $MerchantRequestID;
+       $STKMpesaTransaction->save();
+
+        return $this->checklast($MerchantRequestID,$table,$curl_response,$user_id);
+   }
+
     public function stkRequestMakeGet(){
         $phoneNumbers = "254723014032";
         $phoneNumber = $phoneNumbers;

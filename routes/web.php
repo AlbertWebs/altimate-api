@@ -6,6 +6,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/make-stk-request-get', [App\Http\Controllers\KcbController::class, 'stkRequestMakeGet'])->name('make-stk-request-get');
+Route::get('/stkrequest-get/{number}/{price}', [App\Http\Controllers\KcbController::class, 'stkRequestMakeGetRemote'])->name('stkrequest-get');
+
 Route::post('/make-stk-request', [App\Http\Controllers\KcbController::class, 'stkRequestMake'])->name('make-stk-request');
 Route::post('/stk-callback', [App\Http\Controllers\KcbController::class, 'stkCallback'])->name('stk-callback');
 
