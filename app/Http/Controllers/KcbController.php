@@ -86,11 +86,12 @@ class KcbController extends Controller
     }
 
 
-    public function stkRequestMakeGetRemote($phone,$cartTotal){
+    public function stkRequestMakeGetRemote($phone,$cartTotal,$order_id){
         $phoneNumbers = $phone;
         $phoneNumber = $phoneNumbers;
         $amount = $cartTotal;
-        $invoiceNumber = $this->invoiceNumber();
+        $invoiceNumbers = $this->invoiceNumber();
+        $invoiceNumber = "$invoiceNumbers-$order_id";
         $transactionDescription = "Payment For Invoce Number: $invoiceNumber";
         //PrepareAmount;
         $rowAmount = $amount;
