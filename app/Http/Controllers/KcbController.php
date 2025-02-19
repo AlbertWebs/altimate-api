@@ -361,7 +361,9 @@ class KcbController extends Controller
             // Update Payments Table
             DB::table('s_t_k_requests')->where('CheckoutRequestID',$AccID)->update($UpdateDetails);
             DB::table('lnmo_api_response')->where('CheckoutRequestID',$AccID)->update($UpdateDetail);
-            return $curl_response;
+            // return $curl_response;
+            return redirect()->away('https://www.altimate.co.ke/checkout/order-received/');
+
         }
     }
 }
