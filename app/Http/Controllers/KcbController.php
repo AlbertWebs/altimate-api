@@ -110,7 +110,7 @@ class KcbController extends Controller
            "sharedShortCode"=> true,
            "orgShortCode"=> "",
            "orgPassKey"=> "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919",
-           "callbackUrl"=> "https://buni.designekta.com/stk-callback",
+           "callbackUrl"=> "https://api.altimate.co.ke/stk-callback",
            "transactionDescription"=> "Purchase Invoice #".$invoiceNumber
         );
         $prepare = json_encode($postData);
@@ -383,7 +383,6 @@ class KcbController extends Controller
             // echo "<script>alert('Cash On Delivery')</script>";
         }else{
             /*** Your code ***/
-            //  echo "<script>alert('Payment Required')</script>";
             echo "<script>window.location = 'https://api.altimate.co.ke/stkrequest-get/$billing_phone/$cartTotal/$order_id'</script>";
         }
 
