@@ -367,4 +367,25 @@ class KcbController extends Controller
 
         }
     }
+
+    // For Wordress here add add_action then use the below method to process send_order
+
+    // add_action('woocommerce_thankyou', 'send_order');
+
+    function send_order($order_id){
+        $order = wc_get_order( $order_id );
+        $user = $order->get_user();
+        $billing_phone = $order->get_billing_phone();
+        $payment_method = $order->get_payment_method();
+        $phoneNumber = $user->billing_phone;
+        $cartTotal = $order->get_total();
+        if($payment_method == "cod"){
+            // echo "<script>alert('Cash On Delivery')</script>";
+        }else{
+            /*** Your code ***/
+            //  echo "<script>alert('Payment Required')</script>";
+            echo "<script>window.location = 'https://api.altimate.co.ke/stkrequest-get/$billing_phone/$cartTotal/$order_id'</script>";
+        }
+
+    }
 }
