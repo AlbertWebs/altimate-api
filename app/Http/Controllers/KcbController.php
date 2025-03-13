@@ -350,7 +350,7 @@ class KcbController extends Controller
         $TableData = DB::table('lnmo_api_response')->where('MerchantRequestID', $AccID)->where('status','1')->get();
         if($TableData->isEmpty()){
             sleep(10);
-            return $this->checklast($AccID,$table,$curl_response,$user);
+            return $this->checklast($AccID,$table,$curl_response,$user,$invoiceNumber);
         }else{
             //Go To Requestes and set status to 1, Best alternative is js sockets, We have a temporary fix
             $UpdateDetails = array(
