@@ -363,7 +363,7 @@ class KcbController extends Controller
             DB::table('s_t_k_requests')->where('CheckoutRequestID',$AccID)->update($UpdateDetails);
             DB::table('lnmo_api_response')->where('CheckoutRequestID',$AccID)->update($UpdateDetail);
             foreach($TableData as $table){
-                $message = "We have received your payment of $table->Amount for Invoice:$invoiceNumber on $table->updateTime. Thank you for choosing Altimate Business Machines!";
+                $message = "We have received your payment of Ksh $table->Amount for Invoice:$invoiceNumber on $table->updateTime. Thank you for choosing Altimate Business Machines!";
                 $this->sendSMS($table->PhoneNumber,$message);
             }
 
@@ -425,7 +425,7 @@ class KcbController extends Controller
             );
 
         $response = curl_exec($ch);
-        dd($response);
+        // dd($response);
         curl_close($ch);
     }
 
