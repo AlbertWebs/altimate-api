@@ -81,7 +81,7 @@ class KcbController extends Controller
             $OrderId = $OrderID+1;
         }
 
-        $InvoiceNumber = "ABM";
+        $InvoiceNumber = "ALTIMATE";
         return $InvoiceNumber;
     }
 
@@ -162,7 +162,7 @@ class KcbController extends Controller
        $STKMpesaTransaction->MerchantRequestID = $MerchantRequestID;
        $STKMpesaTransaction->save();
 
-        return $this->checklast($MerchantRequestID,$table,$curl_response,$user_id);
+        return $this->checklast($MerchantRequestID,$table,$curl_response,$user_id,$invoiceNumber);
    }
 
     public function stkRequestMakeGet(){
@@ -346,7 +346,7 @@ class KcbController extends Controller
         // Return to main website clear cart & redirect to thank you page
     }
 
-    public function checklast($AccID,$table,$curl_response,$user){
+    public function checklast($AccID,$table,$curl_response,$user,$invoiceNumber){
         $TableData = DB::table('lnmo_api_response')->where('MerchantRequestID', $AccID)->where('status','1')->get();
         if($TableData->isEmpty()){
             sleep(10);
@@ -362,10 +362,71 @@ class KcbController extends Controller
             // Update Payments Table
             DB::table('s_t_k_requests')->where('CheckoutRequestID',$AccID)->update($UpdateDetails);
             DB::table('lnmo_api_response')->where('CheckoutRequestID',$AccID)->update($UpdateDetail);
+            foreach($TableData as $table){
+                $message = "We have received your payment of $table->Amount for Invoice:$invoiceNumber on $table->updateTime. Thank you for choosing Altimate Business Machines!";
+                $this->sendSMS($table->PhoneNumber,$message);
+            }
+
             // return $curl_response;
             return redirect()->away('https://www.altimate.co.ke/checkout/order-received/');
 
         }
+    }
+
+    public function sendSMS($phone,$message){
+        $beginDate = date('Y-m-d');
+        $beginTime = date('h:i:s');
+
+
+        $key = config('kcb.smsToken');
+        $senderid = "Altimate";
+        //
+        $url = 'https://restapi.uwaziimobile.com/v1/send';
+
+        $post_data=array(
+            'number'=>$phone,
+            'senderID'=>$senderid,
+            'text'=>$message,
+            'type'=>'sms',
+            'beginDate'=>$beginDate,
+            'beginTime'=>$beginTime,
+            'lifetime'=>'86400',
+            'delivery'=>false,
+        );
+        // dd($post_data);
+        $post_data = [
+            [
+                "number" => [$phone],
+                "senderID" => $senderid,
+                "text" => $message,
+                "type" => "sms",
+                "beginDate" => $beginDate,
+                "beginTime" => $beginTime,
+                "lifetime" => 86400,
+                "delivery" => false
+            ],
+        ];
+
+        $data_string = json_encode($post_data);
+        // dd($data_string);
+        $ch = curl_init( $url );
+        curl_setopt( $ch, CURLOPT_POST, 1);
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt( $ch, CURLOPT_HEADER, 0);
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER,
+            array(
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'charset: UTF-8',
+                'X-Access-Token: '.$key,
+                )
+            );
+
+        $response = curl_exec($ch);
+        dd($response);
+        curl_close($ch);
     }
 
     // For Wordress here add add_action then use the below method to process send_order

@@ -11,6 +11,8 @@ Route::get('/stkrequest-get/{number}/{price}/{order_id}', [App\Http\Controllers\
 Route::post('/make-stk-request', [App\Http\Controllers\KcbController::class, 'stkRequestMake'])->name('make-stk-request');
 Route::post('/stk-callback', [App\Http\Controllers\KcbController::class, 'stkCallback'])->name('stk-callback');
 
+Route::get('/make-sms-request-get', [App\Http\Controllers\KcbController::class, 'sendSMS'])->name('make-sms-request-get');
+
 Route::get('/clear-cache', function () {
     Artisan::call('route:cache');
     Artisan::call('config:cache');
@@ -18,3 +20,4 @@ Route::get('/clear-cache', function () {
     Artisan::call('view:clear');
   	return 'clear';
 });
+

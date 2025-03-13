@@ -6,5 +6,6 @@ return [
 'secret' => env('KCB_CONSUMER_SECRET', 'Laravel'),
 'sandboxurl' => env('KCB_SANDBOXURL', 'Laravel'),
 'liveurl' => env('KCB_LIVEURL', 'Laravel'),
+'smsToken' =>env('SMSTOKEN', 'Laravel'),
 
 ];
